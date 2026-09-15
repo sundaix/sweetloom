@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A Little Note From the Garden</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&family=Caveat:wght@600;700&display=swap');
+
+  :root{
+    --sky-top:#FDE7C8;
+    --sky-bottom:#FFC9DD;
+    --mint:#6FCBB4;
+    --mint-deep:#4AA98F;
+    --coral:#FF8F7A;
+    --coral-deep:#E86F5C;
+    --plum:#5B4B76;
+    --plum-deep:#3E3355;
+    --cream:#FFF7EA;
+    --gold:#FFC85C;
+    --glass:rgba(255,255,255,0.62);
+    --glass-border:rgba(255,255,255,0.85);
+    --shadow-soft: 0 8px 24px rgba(91,75,118,0.18);
+    --font-display:'Baloo 2', system-ui, sans-serif;
+    --font-body:'Nunito', system-ui, sans-serif;
+    --font-script:'Caveat', cursive;
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{
+    margin:0; padding:0; min-height:100%;
+    font-family:var(--font-body);
+    background: radial-gradient(ellipse at 50% 15%, #FFF1DD 0%, var(--sky-top) 42%, var(--sky-bottom) 100%);
+    overflow-x:hidden;
+  }
+
+  #bg-shapes{ position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+  .float-shape{
+    position:absolute; border-radius:50%; opacity:.5;
+    animation: floaty 7s ease-in-out infinite;
+  }
+  @keyframes floaty{ 0%,100%{ transform:translateY(0px) } 50%{ transform:translateY(-22px) } }
+
+  main{
+    position:relative; z-index:1; min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+    padding:48px 18px 60px;
+  }
+
+  #bloop-wrap{ width:110px; height:110px; margin-bottom:4px; filter:drop-shadow(0 14px 16px rgba(91,75,118,.28)); animation: bob 2.6s ease-in-out infinite; }
+  @keyframes bob{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+  h1#page-title{
+    font-family:var(--font-display); font-weight:800; color:var(--plum-deep);
+    font-size:clamp(24px,5vw,34px); margin:4px 0 2px; text-align:center;
+    text-shadow: 0 3px 0 rgba(255,255,255,.6);
+  }
+  #page-subtitle{
+    font-family:var(--font-body); font-weight:700; color:var(--mint-deep);
+    font-size:clamp(12px,2.2vw,14px); letter-spacing:2px; margin:0 0 34px; text-align:center;
+  }
+
+  /* ---------- Letter card ---------- */
+  #letter-card{
+    width:100%; max-width:520px; flex:0 1 520px; min-width:0;
+    background:var(--glass);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border:1.5px solid var(--glass-border);
+    box-shadow: var(--shadow-soft);
+    border-radius:26px;
+    padding:38px 34px 32px;
+    position:relative;
+    animation: rise-in .6s cubic-bezier(.2,.8,.3,1);
+  }
+  @keyframes rise-in{ from{ opacity:0; transform:translateY(18px) scale(.98); } to{ opacity:1; transform:translateY(0) scale(1); } }
+
+  #letter-card::before{
+    content:''; position:absolute; top:-10px; left:50%; transform:translateX(-50%);
+    width:56px; height:20px; border-radius:0 0 12px 12px;
+    background:var(--coral); box-shadow: var(--shadow-soft);
+  }
+
+  .letter-greeting{
+    font-family:var(--font-display); font-weight:700; color:var(--plum-deep);
+    font-size:22px; margin:0 0 16px;
+  }
+  #letter-message{
+    font-family:var(--font-body); color:var(--plum-deep); font-size:16px; line-height:1.75;
+  }
+  #letter-message p{ margin:0 0 14px; }
+  #letter-message p:last-child{ margin-bottom:0; }
+
+  .letter-signoff{
+    margin-top:26px; text-align:right;
+  }
+  .letter-signoff .from-line{
+    font-family:var(--font-script); font-size:30px; color:var(--coral-deep); line-height:1;
+  }
+  .letter-signoff .from-sub{
+    font-family:var(--font-body); font-weight:700; font-size:11px; color:var(--mint-deep);
+    letter-spacing:1.5px; margin-top:2px;
+  }
+
+  .divider{
+    display:flex; align-items:center; gap:10px; margin:22px 0; opacity:.7;
+  }
+  .divider::before, .divider::after{ content:''; flex:1; height:1px; background:rgba(91,75,118,.25); }
+  .divider span{ color:var(--gold); font-size:14px; }
+
+  #stamp-row{
+    display:flex; justify-content:center; gap:14px; margin-top:8px;
+  }
+  .stamp-icon{ width:26px; height:26px; opacity:.85; }
+
+  #back-btn{
+    margin-top:34px; font-family:var(--font-display); font-size:16px; font-weight:600; color:var(--cream);
+    padding:13px 30px; border-radius:999px; border:none; cursor:pointer; text-decoration:none;
+    background:linear-gradient(180deg,var(--mint) 0%, var(--mint-deep) 100%);
+    box-shadow: 0 6px 0 #3A8A73, 0 10px 20px rgba(74,169,143,0.35);
+    transition: transform .08s ease, box-shadow .08s ease;
+    display:inline-block;
+  }
+  #back-btn:active{ transform: translateY(4px); box-shadow: 0 2px 0 #3A8A73, 0 4px 10px rgba(74,169,143,0.3); }
+
+  @media (max-width:520px){
+    #letter-card{ padding:30px 22px 26px; border-radius:22px; }
+  }
+
+  /* ---------- Photo cards (left & right of the letter) ---------- */
+  #letter-stage{
+    display:flex; align-items:flex-start; justify-content:center;
+    gap:20px; width:100%; max-width:1080px;
+  }
+  .photo-col{
+    display:flex; flex-direction:column; width:150px; flex-shrink:0;
+  }
+  .photo-card{
+    background:#FFFDF8; padding:10px 10px 26px; border-radius:12px;
+    box-shadow: var(--shadow-soft);
+    border:1px solid rgba(255,255,255,.9);
+    position:relative;
+    transition: transform .25s ease, box-shadow .25s ease;
+  }
+  .photo-card:hover{ transform: rotate(0deg) scale(1.05) !important; box-shadow: 0 14px 30px rgba(91,75,118,.28); z-index:6; }
+  .photo-card::before{
+    content:''; position:absolute; top:-12px; left:50%;
+    width:50px; height:20px; border-radius:2px;
+    background:rgba(255,201,92,.6); border:1px solid rgba(255,255,255,.7);
+    box-shadow:0 2px 4px rgba(0,0,0,.08);
+  }
+  .photo-card:nth-child(even)::before{ background:rgba(255,143,122,.55); }
+  .photo-placeholder{
+    width:100%; aspect-ratio:1/1; border-radius:8px;
+    background: repeating-linear-gradient(135deg, rgba(91,75,118,.06), rgba(91,75,118,.06) 10px, rgba(255,255,255,.35) 10px, rgba(255,255,255,.35) 20px);
+    border:2px dashed rgba(91,75,118,.3);
+    display:flex; align-items:center; justify-content:center; flex-direction:column; gap:6px;
+    color:var(--plum-deep); text-align:center; padding:8px;
+  }
+  .photo-placeholder svg{ width:26px; height:26px; opacity:.45; }
+  .photo-placeholder span{ font-family:var(--font-body); font-weight:700; font-size:10.5px; letter-spacing:.3px; opacity:.65; }
+  .photo-img{ width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:8px; display:block; }
+  .photo-caption{
+    margin-top:8px; text-align:center; font-family:var(--font-script); font-size:15px; color:var(--plum-deep);
+  }
+
+  @media (max-width:980px){
+    #letter-stage{ flex-direction:column; align-items:center; }
+    .photo-col{
+      flex-direction:row; flex-wrap:wrap; justify-content:center; width:100%; max-width:420px;
+      gap:16px !important; order:2;
+    }
+    .photo-col.photo-col-left{ order:2; margin-top:30px; }
+    .photo-col.photo-col-right{ order:3; margin-top:6px; }
+    .photo-card{ width:120px; margin-top:0 !important; transform:rotate(0deg) !important; }
+    #letter-card{ order:1; }
+  }
+
+  /* ---------- Site credit / trademark ---------- */
+  #site-credit{
+    margin-top:38px; display:inline-flex; align-items:center; gap:7px;
+    background:var(--glass);
+    backdrop-filter: blur(10px) saturate(140%);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+    border:1.5px solid var(--glass-border); border-radius:999px;
+    padding:8px 16px 8px 12px;
+    font-family:var(--font-display); font-weight:700; color:var(--plum-deep); font-size:12.5px;
+    letter-spacing:.3px; box-shadow: var(--shadow-soft); opacity:.85;
+  }
+  #site-credit svg{ width:14px; height:14px; }
+</style>
+</head>
+<body>
+
+<div id="bg-shapes"></div>
+
+<main>
+  <svg id="bloop-wrap" viewBox="0 0 200 200"></svg>
+
+  <h1 id="page-title">Congrats, My James! 🎉</h1>
+  <p id="page-subtitle">A KEEPSAKE FROM SWEETLOOM GARDEN</p>
+
+  <div id="letter-stage">
+
+    <!-- ============================================================
+         📸 PHOTOS: to add a picture, delete the <div class="photo-placeholder">...</div>
+         inside a card and put this in its place:
+         <img class="photo-img" src="your-photo.jpg" alt="">
+         Each card's tilt/spacing is set inline via style="transform / margin-top"
+         so feel free to nudge those numbers too.
+    ============================================================= -->
+    <div class="photo-col photo-col-left">
+      <div class="photo-card" style="transform:rotate(-7deg); margin-top:6px;">
+        <img class="photo-img" src="love1.jpg" alt="Karl and James">
+        <div class="photo-caption">us :)</div>
+      </div>
+      <div class="photo-card" style="transform:rotate(5deg); margin-top:44px;">
+        <img class="photo-img" src="love2.jpg" alt="Karl and James">
+        <div class="photo-caption">hehe</div>
+      </div>
+      <div class="photo-card" style="transform:rotate(-3deg); margin-top:-6px;">
+        <img class="photo-img" src="love3.jpg" alt="Karl and James">
+        <div class="photo-caption">favorite day</div>
+      </div>
+      <div class="photo-card" style="transform:rotate(6deg); margin-top:48px;">
+        <img class="photo-img" src="love4.jpg" alt="Karl and James">
+        <div class="photo-caption">study grind</div>
+      </div>
+      <div class="photo-card" style="transform:rotate(-5deg); margin-top:-10px;">
+        <img class="photo-img" src="love5.jpg" alt="Karl and James">
+        <div class="photo-caption">fam &amp; friends</div>
+      </div>
+    </div>
+
+    <div id="letter-card">
+      <div class="letter-greeting">Congrats, my James!</div>
+
+      <div id="letter-message">
+        <p>First of all, I dedicate this cute game to you hehe. I made this game to represent how my world and how our relationship looks like (cute, chill, and youthful energy). I think about making a platforming game because I like the idea of jumping through these platforms, and para sakin, nire-represent ka nung character because every step is every achievement na nalagpasan mo, and once you reach the end, it will be all worth it because of the efforts that you gave.</p>
+        <p>Ayun, I am very sorry these last few days dahil super nagkulang talaga me ng support, and it is my bad talaga. Gets ko naman ang pinagdadaanan mo these days, lalo alam kong mahirap talaga mag-review for boards, tas may mga minememorize ka pa, tas alam ko na you are aiming for being a topnotcher. Pero ayun, I am very sorry na naging selfish na naman ako these last few days dahil di ko man lang pina-feel sayo ang support na manggagaling sana sa iyong boyfriend.</p>
+        <p>Pero ayun, always remember na I am here din to support you in your every journey, and yeah, andyan ang fam mo and your friends na chinicheer ka palagi sa mga pinagdaanan mo and sa mga nagiging choices mo sa life.</p>
+        <p>Ayun, baby, I'm praying na sana maging smooth na talaga ang flow ng life mo, lalo after your boards hehe, dahil alam ko na nakaka-pressure din ang pinagdadaanan mo, lalo panganay ka pa, tas alam ko rin na gusto mo bumawi kahit papaano sa parents mo, lalo sa pang-i-spoil nila sayo, lalo nung ikaw ay student pa lang.</p>
+        <p>Ayun, baby, malayo ka na talaga huhu. Malayo na ang naging progress mo sa lifee, and I'm always believing talaga sayo, and I'm here din sa mga magiging choices mo sa buhay. Di ko man lang nae-express masyado ang support sayo or emotions, but ayun, I genuinely care for you talaga &lt;33&gt;.</p>
+        <p>I love you so much, my licensed geodetic engr., and good luck sa boards niyo in the next few weeks! Mwa! Mwa!</p>
+      </div>
+
+      <div class="letter-signoff">
+        <div class="from-line">With love, Karl</div>
+        <div class="from-sub">MWA! MWA!</div>
+      </div>
+
+      <div class="divider"><span>✦ ✦ ✦</span></div>
+
+      <div id="stamp-row">
+        <svg class="stamp-icon" viewBox="0 0 26 26"><circle cx="13" cy="13" r="10" fill="#FFC85C" stroke="#E8A93C" stroke-width="2"/><circle cx="13" cy="13" r="5.5" fill="#FFE29A"/></svg>
+        <svg class="stamp-icon" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.3C.5 8 2.6 4.8 6 4.8c2 0 3.4 1.1 4 2.2.6-1.1 2-2.2 4-2.2 3.4 0 5.5 3.2 4 6.9C19.5 16.4 12 21 12 21z" fill="#FF8F7A" stroke="#E86F5C" stroke-width="1"/></svg>
+        <svg class="stamp-icon" viewBox="0 0 26 26"><circle cx="13" cy="13" r="10" fill="#FFC85C" stroke="#E8A93C" stroke-width="2"/><circle cx="13" cy="13" r="5.5" fill="#FFE29A"/></svg>
+      </div>
+    </div>
+
+    <div class="photo-col photo-col-right">
+      <div class="photo-card" style="transform:rotate(6deg); margin-top:22px;">
+        <img class="photo-img" src="love6.jpg" alt="Karl and James">
+        <div class="photo-caption">someday</div>
+      </div>
+      <div class="photo-card" style="transform:rotate(-8deg); margin-top:-8px;">
+        <img class="photo-img" src="love7.jpg" alt="Karl and James">
+        <div class="photo-caption">soon: engr. James</div>
+      </div>
+      <div class="photo-card" style="transform:rotate(4deg); margin-top:50px;">
+        <img class="photo-img" src="love8.jpg" alt="Karl and James">
+        <div class="photo-caption">i love you</div>
+      </div>
+      <div class="photo-card" style="transform:rotate(-4deg); margin-top:-4px;">
+        <img class="photo-img" src="love9.jpg" alt="Karl and James">
+        <div class="photo-caption">our trip</div>
+      </div>
+      <div class="photo-card" style="transform:rotate(7deg); margin-top:52px;">
+        <img class="photo-img" src="love10.jpg" alt="Karl and James">
+        <div class="photo-caption">proud of you</div>
+      </div>
+    </div>
+
+  </div>
+
+  <a id="back-btn" href="index.html">Back to the Garden</a>
+
+  <div id="site-credit">
+    <svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.3C.5 8 2.6 4.8 6 4.8c2 0 3.4 1.1 4 2.2.6-1.1 2-2.2 4-2.2 3.4 0 5.5 3.2 4 6.9C19.5 16.4 12 21 12 21z" fill="#FF8F7A" stroke="#E86F5C" stroke-width="1"/></svg>
+    Karl Go&trade;
+  </div>
+</main>
+
+<script>
+(function(){
+  // Bloop character art, matching the game file
+  function bloopSVG(){
+    return `
+    <defs>
+      <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#8FE0C9"/>
+        <stop offset="100%" stop-color="#4AA98F"/>
+      </linearGradient>
+      <radialGradient id="cheekGrad" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#FF9E8A"/>
+        <stop offset="100%" stop-color="#FF9E8A" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <ellipse cx="100" cy="178" rx="46" ry="10" fill="#3E3355" opacity="0.12"/>
+    <circle cx="62" cy="66" r="20" fill="url(#bodyGrad)"/>
+    <circle cx="138" cy="66" r="20" fill="url(#bodyGrad)"/>
+    <circle cx="62" cy="66" r="10" fill="#FFE9DA"/>
+    <circle cx="138" cy="66" r="10" fill="#FFE9DA"/>
+    <ellipse cx="100" cy="120" rx="62" ry="58" fill="url(#bodyGrad)"/>
+    <path d="M45 150 q55 34 110 0 v10 q-55 30 -110 0 z" fill="#FF8F7A"/>
+    <circle cx="60" cy="154" r="4" fill="#FFF7EA"/>
+    <circle cx="80" cy="160" r="4" fill="#FFF7EA"/>
+    <circle cx="120" cy="160" r="4" fill="#FFF7EA"/>
+    <circle cx="140" cy="154" r="4" fill="#FFF7EA"/>
+    <ellipse cx="100" cy="132" rx="30" ry="22" fill="#FFF6E6"/>
+    <circle cx="70" cy="128" r="14" fill="url(#cheekGrad)"/>
+    <circle cx="130" cy="128" r="14" fill="url(#cheekGrad)"/>
+    <g id="eyeL"><circle cx="80" cy="108" r="13" fill="#3E3355"/><circle cx="83" cy="104" r="4" fill="#fff"/></g>
+    <g id="eyeR"><circle cx="120" cy="108" r="13" fill="#3E3355"/><circle cx="123" cy="104" r="4" fill="#fff"/></g>
+    <path d="M92 134 q8 7 16 0" stroke="#3E3355" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <ellipse cx="100" cy="96" rx="7" ry="5" fill="#FFCDAE"/>
+    `;
+  }
+  document.getElementById('bloop-wrap').innerHTML = bloopSVG();
+
+  // floating decor shapes, matching the game's menu background
+  const bg = document.getElementById('bg-shapes');
+  const shapeColors = ['#FFD9E0','#C9E9DC','#FFE7A3','#D8C9EC'];
+  const rand = (a,b)=> a+Math.random()*(b-a);
+  for(let i=0;i<10;i++){
+    const s = document.createElement('div');
+    s.className='float-shape';
+    const size = rand(24,64);
+    s.style.width=size+'px'; s.style.height=size+'px';
+    s.style.left = rand(0,100)+'%'; s.style.top = rand(5,90)+'%';
+    s.style.background = shapeColors[i%shapeColors.length];
+    s.style.animationDelay = rand(0,4)+'s';
+    s.style.animationDuration = rand(5,9)+'s';
+    bg.appendChild(s);
+  }
+})();
+</script>
+
+</body>
+</html>
